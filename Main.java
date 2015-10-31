@@ -4,7 +4,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
-		System.out.println(sumOfProperDivisors(220));
 		System.out.println(AmicableNumbers());
 		long stopTime = System.nanoTime();
 		System.out.println("Time taken: " + (double)(stopTime - startTime) / 1000000000 + " seconds");
@@ -618,23 +617,32 @@ public class Main {
 		return total;
 	}
 	// problem 21
+	/*
+	 * For this problem, I iterated through all the numbers under 10001, found the sum of the factors 
+	 * of each, and then I just checked if there was a corresponding number that made an amicable number
+	 * pair. If there was, then I added it to a running total. I also checked to see if the sum of
+	 * proper divisors was less than the number itself, so that I wouldn't double-count amicable
+	 * numbers.
+	 */
 	public static double AmicableNumbers(){
 		double numberCount = 0;
 		for(int i = 2; i < 10001; i++){
-			int A = sumOfProperDivisors(i);
-			if(sumOfProperDivisors(A) == A){
-				numberCount += (A + sumOfProperDivisors(A));
+			int A = 0;
+			for(int k = 1; k < Math.ceil(i / 2) + 1; k++){
+				if(i % k == 0){
+					A += k;
+				}
+			}
+			int B = 0;
+			for(int k = 1; k < Math.ceil(A / 2) + 1; k++){
+				if(A % k == 0){
+					B += k;
+				}
+			}
+			if(A < i && B == i){
+				numberCount += (i + A);
 			}
 		}
 		return numberCount;
-	}
-	public static int sumOfProperDivisors(int i){
-		int sum = 0;
-		for(int k = 1; k < Math.ceil(i / 2) + 1; k++){
-			if(i % k == 0){
-				sum += k;
-			}
-		}
-		return sum;
 	}
 }
