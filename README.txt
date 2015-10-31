@@ -1,0 +1,1 @@
+The .java file contains a main method and a number of other methods that solve problems on projecteuler.net. The main method simply has a print statement to print the result of each method call, and some code that measures how long the method call took.
