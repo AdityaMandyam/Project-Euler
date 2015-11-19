@@ -5,7 +5,7 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException{
 		long startTime = System.nanoTime();
-		System.out.println(PandigitalProducts());
+		System.out.println();
 		long stopTime = System.nanoTime();
 		System.out.println("Time taken: " + (double)(stopTime - startTime) / 1000000000 + " seconds");
 	}
@@ -874,49 +874,5 @@ public class Main {
 			}
 		}
 		return answer;
-	}
-	//problem 32
-	public static int PandigitalProducts(){
-		ArrayList<Integer> pandigitals = new ArrayList<>();
-		ArrayList<Character> compareTo = new ArrayList<>();
-		compareTo.add('1');
-		compareTo.add('2');
-		compareTo.add('3');
-		compareTo.add('4');
-		compareTo.add('5');
-		compareTo.add('6');
-		compareTo.add('7');
-		compareTo.add('8');
-		compareTo.add('9');
-		for(int i = 1234; i <= 9876; i++){
-			for(int j = 1; j < Math.ceil(Math.sqrt(i)) + 1; j++){
-				for(int k = 1; k < Math.ceil(Math.sqrt(i)) + 1; k++){
-					ArrayList<Character> toCompare = new ArrayList<>();
-					String x = i + "" + j + "" + k + "";
-					for(int a = 0; a < x.length(); a++){
-						toCompare.add(x.charAt(a));
-					}
-					Collections.sort(toCompare);
-					boolean isSame = true;
-					if(toCompare.size() == compareTo.size()){
-						for(int b = 0; b < compareTo.size(); b++){
-							if(toCompare.get(b) != compareTo.get(b)){
-								isSame = false;
-							}
-						}
-					}
-					if(isSame){
-						System.out.println(j + " x " + k + " = " + i);
-						pandigitals.add(i);
-					}
-				}
-			}
-		}
-		HashSet<Integer> removeDuplicates = new HashSet<>(pandigitals);
-		int sum = 0;
-		for(int x : removeDuplicates){
-			sum += x;
-		}
-		return sum;
 	}
 }
