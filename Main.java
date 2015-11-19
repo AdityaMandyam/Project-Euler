@@ -1,10 +1,11 @@
 import java.math.*;
 import java.util.*;
+import java.io.*;
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException{
 		long startTime = System.nanoTime();
-		System.out.println(AmicableNumbers());
+		System.out.println(PandigitalProducts());
 		long stopTime = System.nanoTime();
 		System.out.println("Time taken: " + (double)(stopTime - startTime) / 1000000000 + " seconds");
 	}
@@ -13,7 +14,7 @@ public class Main {
 	 * This was a very straightforward problem. I just iterated through all the numbers under 1000
 	 * and if they were a multiple of 3 or 5, I added them to the sum. Then return the sum.
 	 */
-	public static int multiplesOf3and5(){
+	public static int MultiplesOf3And5(){
 		int sum = 0;
 		for(int i = 1; i < 1000; i++){
 			if(i % 3 == 0 || i % 5 == 0){
@@ -158,6 +159,7 @@ public class Main {
 			number++;
 		}
 		return primesList.get(10000);
+		
 	}
 	// problem 8
 	/*
@@ -193,18 +195,18 @@ public class Main {
 	 * c. Then I checked if a + b + c was equal to 1000. If it was, I just returned the product of all 
 	 * three.
 	 */
-	public static double SpecialPythagoreanTriplet(){
+	public static String SpecialPythagoreanTriplet(){
 		for(int a = 1; a < 1000; a++){
 			for(int b = 1; b < 1000; b++){
 				double c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
 				if((a + b + c) == 1000){
-					return a*b*c;
+					return String.format("%.0f", a * b * c);
 				}
 			}
 		}
-		return 0.0;
+		return "";
 	}
-	// problem 10
+	// problem 10 - NEEDS TO BE FASTER
 	/*
 	 * I used the same method of getting primes as I did in problem 7. This time, I just kept finding primes
 	 * that were less than 2000000, and then stored them all in a list. Then I just added all the elements
@@ -429,7 +431,7 @@ public class Main {
 		}
 		return String.format("%.7f", finalSum);
 	}
-	// problem 14
+	// problem 14 - NEEDS TO BE FASTER
 	/*
 	 * Very simple direct approach. Just iterating through all numbers below 1000000, and counting the 
 	 * length of each sequence and then returning the greatest length.
@@ -474,8 +476,6 @@ public class Main {
 				kFactorial *= i;
 			}
 		}
-		System.out.println(nFactorial);
-		System.out.println(kFactorial);
 		double answer = nFactorial / Math.pow(kFactorial, 2);
 		return String.format("%.0f", answer);
 	}
@@ -644,5 +644,279 @@ public class Main {
 			}
 		}
 		return numberCount;
+	}
+	// problem 22
+	/*
+	 * For this problem, I used a Scanner to read the names into an array. The names were comma
+	 * separated so I used the String.split method to separate the names. I used the Collections.sort
+	 * method to alphabetize the names. Then I made a String containing the alphabet in order, and 
+	 * then used the indexes of the characters in that string to calculate the number score. After
+	 * that, I multiplied the number score by it's position in the sorted name list to get the final
+	 * number score, and then added them to a running total.
+	 */
+	public static int NamesScores() throws FileNotFoundException{
+		Scanner input = new Scanner(new File("names.txt"));
+		List<String> names = new ArrayList<String>(Arrays.asList(input.next().split(",")));
+		input.close();
+		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		Collections.sort(names);
+		int sum = 0;
+		for(String x : names){
+			int nameScore = 0;
+			for(int i = 0; i < x.length(); i++){
+				nameScore += alphabet.indexOf(x.charAt(i)) + 1;
+			}
+			sum += (nameScore * (names.indexOf(x) + 1));
+		}
+		return sum;
+	}
+	// problem 23 - NEEDS TO BE FASTER
+	/*
+	 * For this problem, I had issues with keeping the execution time low. Finding abundant numbers was 
+	 * very easy since I just found the factors of the number 
+	 */
+	public static int NonAbundantSums(){
+		ArrayList<Integer> abundantNumbers = new ArrayList<>();
+		for(int i = 12; i <= 28123; i++){
+			int sum = 0;
+			for(int j = 1; j < Math.ceil(i / 2) + 1; j++){
+				if(i % j == 0){
+					sum += j;
+				}
+			}
+			if(sum > i){
+				abundantNumbers.add(i);
+			}
+		}
+		boolean sumOfAbundantNumbers[] = new boolean[28124];
+		for(int x : abundantNumbers){
+			for(int j : abundantNumbers){
+				if((x + j) <= 28123){
+					sumOfAbundantNumbers[x + j] = true;
+				} else{
+					break;
+				}
+			}
+		}
+		for(boolean x : sumOfAbundantNumbers){
+			if(x){
+				continue;
+			} else{
+				x = false;
+			}
+		}
+		int sum = 0;
+		for(int i = 0; i < sumOfAbundantNumbers.length; i++){
+			if(!sumOfAbundantNumbers[i]){
+				sum += i;
+			}
+		}
+		return sum;
+	}
+	// problem 24
+	/*
+	 * For this problem, I searched the Internet for algorithms that produce permutations of the 
+	 * characters. I found a website where the author referenced a book called "A Discipline of Programming"
+	 * by E. W. Dijkstra. The author of the website had listed an algorithm that would produce permutations
+	 * in lexicographic order. I implemented the algorithm, and placed it in a loop that would end once it
+	 * found the millionth permutation.
+	 */
+	public static String LexicographicPermutations(){
+		int counter = 0;
+		char numbers[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+		while(counter < 999999){
+			int N = numbers.length;
+			int i = N - 1;
+			while(numbers[i - 1] >= numbers[i]){
+				i = i - 1;
+			}
+			int j = N;
+			while(numbers[j - 1] <= numbers[i - 1]){
+				j = j - 1;
+			}
+			char temp1 = numbers[j - 1];
+			numbers[j - 1] = numbers[i - 1];
+			numbers[i - 1] = temp1;
+			i++;
+			j = N;
+			while(i < j){
+				char temp2 = numbers[j - 1];
+				numbers[j - 1] = numbers[i - 1];
+				numbers[i - 1] = temp2;
+				i++;
+				j--;
+			}
+			counter++;
+		}
+		String x = "";
+		for(char y : numbers){
+			x += y;
+		}
+		return x;
+	}
+	// problem 25
+	/* 
+	 * I solved this problem by simply calculating fibonacci numbers until I found one that is 1000 characters
+	 * long. I created an array of length 3 of BigIntegers. At index 0, I stored the 1st fibonacci number.
+	 * At index 1, I stored the 2nd fibonacci number. At index 2, I stored the 0th fibonacci number. I set
+	 * my index counter to 0, and then just calculated fibonacci numbers until I got a 1000 length number.
+	 * Then I returned the index counter that was incrementing each time a number was found. I could 
+	 * not use my previous method of finding fibonacci numbers using the golden ratio since the power 
+	 * method in the BigDecimal class only takes integer parameters. I only needed to store the previous
+	 * 2 fibonacci numbers since those are necessary to calculate the next number. 
+	 */
+	public static int ThousandDigitFibonacciNumber(){
+		String fibString = "";
+		BigInteger first = new BigInteger("0");
+		BigInteger second = new BigInteger("1");
+		BigInteger third = new BigInteger("1");
+		BigInteger[] fibNumbers = {first, second, third};
+		int i = 0;
+		int counter = 2;
+		while(fibString.length() < 1000){
+			if(counter == 3){
+				fibNumbers[1] = fibNumbers[0].add(fibNumbers[2]);
+				counter = 1;
+			} else if (counter == 2){
+				fibNumbers[0] = fibNumbers[2].add(fibNumbers[1]);
+				counter++;
+			} else if (counter == 1){
+				fibNumbers[2] = fibNumbers[0].add(fibNumbers[1]);
+				counter++;
+			}
+			i++;
+			fibString = fibNumbers[2].toString();
+		}
+		return i;
+	}
+	// problem 26
+	// Incomplete
+	public static double ReciprocalCycles(){
+		HashMap<Integer, Boolean> values = new HashMap<Integer, Boolean>();
+		for(int i = 2; i <= 1000; i++){
+			values.put(i, true);
+		}
+		for(int i = 2; i < Math.ceil(Math.sqrt(1000)) + 1; i++){
+			if(values.get(i) == true){
+				for(double j = Math.pow(i, 2); j <= 1000; j += i){
+					values.replace((int)j, false);
+				}
+			}
+		}
+		ArrayList<Integer> primes = new ArrayList<>();
+		for(int key : values.keySet()){
+			if(values.get(key) == true){
+				primes.add(key);
+			}
+		}
+		return 0;
+	}
+	// problem 28
+	/*
+	 * This problem was a fun little trick question. If you look at the diagram they provided, you'll
+	 * notice that the number in the top left corner could be defined by (3n + 1)^2, or the square of
+	 * consecutive odd numbers. Then the other three numbers to add can be found out by subtracting 
+	 * n and then adding 1. Now that we have found all the numbers on the diagonal, we just need
+	 * to add them all together, which can be done by adding each diagonal for each loop in the spiral
+	 * to a running total. I returned a formatted string because Java represents large double values
+	 * in scientific notation. I used the string only for aesthetics.
+	 */
+	public static String NumberSpiralDiagonals(){
+		double i = 3;
+		double x = 0;
+		double sum = 1;
+		while(x < Math.pow(1001, 2)){
+			x = i * i;
+			double add1 = (x - i) + 1 > 0 ? (x - i) + 1 : 0;
+			double add2 = (add1 - i) + 1 > 0 ? (add1 - i) + 1 : 0;
+			double add3 = (add2 - i) + 1 > 0 ? (add2 - i) + 1 : 0;
+			sum += x + add1 + add2 + add3;
+			i += 2;
+		}
+		return String.format("%.0f", sum);
+	}
+	// problem 29
+	/*
+	 * This problem was fairly straightforward. I used the BigInteger class to store the value of 
+	 * a^b, since it got very large towards the end (100^100). I added these values to an ArrayList
+	 * Then, I removed all the duplicates by converting the ArrayList to a HashSet, and found the size
+	 * of the HashSet.
+	 */
+	public static int DistinctPowers(){
+		ArrayList<BigInteger> numbers= new ArrayList<>();
+		for(int i = 2; i <= 100; i++){
+			for(int j = 2; j <= 100; j++){
+				BigInteger number = new BigInteger(i + "").pow(j);
+				numbers.add(number);
+			}
+		}
+		HashSet<BigInteger> removeDuplicates = new HashSet<>(numbers);
+		return removeDuplicates.size();
+	}
+	// problem 30
+	/*
+	 * For this problem, I ran through all the numbers under 295245 and then just added up the ones that
+	 * satisfied the conditions. I converted the number to a string to be able to access the individual
+	 * digits and then took the digits to the fifth power and added them to the sum. If the sum was equal
+	 * to the number, then I added it to a running total. I took 295245 as the upper bound because it was 
+	 * the largest sum that you can make using the premise of the problem (9^5 + 9^5 + 9^5 + 9^5 + 9^5).
+	 */
+	public static int DigitFifthPowers(){
+		int answer = 0;
+		for(int i = 2; i < 295245; i++){
+			int sum = 0;
+			String x = i + "";
+			for(int j = 0; j < x.length(); j++){
+				sum += Math.pow(Character.getNumericValue(x.charAt(j)), 5);
+			}
+			if(sum == i){
+				answer += i;
+			}
+		}
+		return answer;
+	}
+	//problem 32
+	public static int PandigitalProducts(){
+		ArrayList<Integer> pandigitals = new ArrayList<>();
+		ArrayList<Character> compareTo = new ArrayList<>();
+		compareTo.add('1');
+		compareTo.add('2');
+		compareTo.add('3');
+		compareTo.add('4');
+		compareTo.add('5');
+		compareTo.add('6');
+		compareTo.add('7');
+		compareTo.add('8');
+		compareTo.add('9');
+		for(int i = 1234; i <= 9876; i++){
+			for(int j = 1; j < Math.ceil(Math.sqrt(i)) + 1; j++){
+				for(int k = 1; k < Math.ceil(Math.sqrt(i)) + 1; k++){
+					ArrayList<Character> toCompare = new ArrayList<>();
+					String x = i + "" + j + "" + k + "";
+					for(int a = 0; a < x.length(); a++){
+						toCompare.add(x.charAt(a));
+					}
+					Collections.sort(toCompare);
+					boolean isSame = true;
+					if(toCompare.size() == compareTo.size()){
+						for(int b = 0; b < compareTo.size(); b++){
+							if(toCompare.get(b) != compareTo.get(b)){
+								isSame = false;
+							}
+						}
+					}
+					if(isSame){
+						System.out.println(j + " x " + k + " = " + i);
+						pandigitals.add(i);
+					}
+				}
+			}
+		}
+		HashSet<Integer> removeDuplicates = new HashSet<>(pandigitals);
+		int sum = 0;
+		for(int x : removeDuplicates){
+			sum += x;
+		}
+		return sum;
 	}
 }
